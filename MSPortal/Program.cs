@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using MSPortal.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,7 +10,23 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+
+
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("AppDBConnectionString"));
+});
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", b => b.AllowAnyHeader()
+    .AllowAnyOrigin()
+    .AllowAnyMethod());
+});
+
 var app = builder.Build();
+
+app.UseCors("AllowAll");
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
